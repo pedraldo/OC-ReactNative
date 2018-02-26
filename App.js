@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Search from './Components/Search';
+import SearchStackNavigator from './Navigation/Navigation'
+import { StyleSheet } from 'react-native'
 
 export default class App extends React.Component {
   render() {
     return (
-      <Search/>
+      <SearchStackNavigator/>
     );
   }
 }

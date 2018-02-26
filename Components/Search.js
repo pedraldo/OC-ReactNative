@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, View, TextInput, Button, FlatList, ActivityIndicator } from 'react-native'
 import FilmItem from './FilmItem'
 import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi'
+import FilmDetail from './FilmDetail';
 
 class Search extends React.Component {
     constructor(props) {
@@ -53,6 +54,10 @@ class Search extends React.Component {
         }
     }
 
+    _displayDetailForFilm = (idFilm) => {
+        this.props.navigation.navigate("FilmDetail", { idFilm })
+    }
+
     render() {
         return (
             <View style={styles.main_container}>
@@ -66,7 +71,7 @@ class Search extends React.Component {
                 <FlatList
                     data={this.state.films}
                     keyExtractor={(item) => item.id}
-                    renderItem={({item}) => <FilmItem film={item}/>}
+                    renderItem={({item}) => <FilmItem film={item} displayDetailForFilm={this._displayDetailForFilm}/>}
                     onEndReachedThreshold={0.5}
                     onEndReached={() => {
                         if (this.state.films.length > 0) {
@@ -82,8 +87,7 @@ class Search extends React.Component {
 
 const styles = StyleSheet.create({
     main_container: {
-        flex: 1,
-        marginTop: 20
+        flex: 1
     },
     textinput: {
         marginLeft: 5,

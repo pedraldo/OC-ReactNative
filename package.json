@@ -20,8 +20,11 @@
   },
   "dependencies": {
     "expo": "^25.0.0",
+    "moment": "^2.20.1",
+    "numeral": "^2.0.6",
     "react": "16.2.0",
     "react-native": "0.52.0",
+    "react-navigation": "^1.2.0",
     "watchman": "^1.0.0"
   }
 }
