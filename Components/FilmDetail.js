@@ -1,13 +1,14 @@
 import React from 'react'
 import numeral from 'numeral'
 import moment from 'moment'
-import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView } from 'react-native'
+import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native'
+import { connect } from 'react-redux'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { 
+        this.state = {
             film: undefined,
             isLoading: true,
         }
@@ -17,7 +18,7 @@ class FilmDetail extends React.Component {
         if (this.state.isLoading) {
             return (
                 <View style={styles.loading_container}>
-                    <ActivityIndicator size="large"/>
+                    <ActivityIndicator size="large" />
                 </View>
             )
         }
@@ -33,6 +34,11 @@ class FilmDetail extends React.Component {
                         source={{ uri: getImageFromApi(film.poster_path) }}
                     />
                     <Text style={styles.title_text}>{film.title}</Text>
+                    <TouchableOpacity
+                        style={styles.favorite_container}
+                        onPress={() => this._toggleFavorite()}>
+                        {this._displayFavoriteImage()}
+                    </TouchableOpacity>
                     <Text style={styles.overview_text}>{film.overview}</Text>
                     <Text style={styles.infos_text}>Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}</Text>
                     <Text style={styles.infos_text}>Note : {film.vote_average}/10</Text>
@@ -43,6 +49,26 @@ class FilmDetail extends React.Component {
                 </ScrollView>
             )
         }
+    }
+
+    _displayFavoriteImage() {
+        let sourceImage
+
+        sourceImage = !!this.props.favoriteFilms.find(film => film.id === this.state.film.id) 
+            ? require('../Images/ic_favorite.png')
+            : require('../Images/ic_favorite_border.png')
+
+        return (
+            <Image 
+                style={styles.favorite_image}
+                source={sourceImage}
+            />
+        )
+    }
+
+    _toggleFavorite() {
+        const action = { type: 'TOGGLE_FAVORITE', value: this.state.film }
+        this.props.dispatch(action)
     }
 
     render() {
@@ -63,7 +89,7 @@ class FilmDetail extends React.Component {
             })
         })
     }
-    
+
 }
 
 const styles = StyleSheet.create({
@@ -85,8 +111,8 @@ const styles = StyleSheet.create({
     image: {
         height: 169,
         margin: 5
-      },
-      title_text: {
+    },
+    title_text: {
         fontWeight: 'bold',
         fontSize: 35,
         flex: 1,
@@ -97,18 +123,31 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         color: '#000000',
         textAlign: 'center'
-      },
-      overview_text: {
+    },
+    favorite_container: {
+        alignItems: 'center'
+    },
+    favorite_image: {
+        width: 40,
+        height: 40
+    },
+    overview_text: {
         fontStyle: 'italic',
         color: '#666666',
         margin: 5,
         marginBottom: 15
-      },
-      infos_text: {
+    },
+    infos_text: {
         marginLeft: 5,
         marginRight: 5,
         marginTop: 5,
-      }
+    }
 })
 
-export default FilmDetail
+const mapStateToProps = (state) => {
+    return {
+        favoriteFilms: state.favoriteFilms
+    }
+}
+
+export default connect(mapStateToProps)(FilmDetail)

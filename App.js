@@ -1,11 +1,15 @@
 import React from 'react';
 import SearchStackNavigator from './Navigation/Navigation'
 import { StyleSheet } from 'react-native'
+import { Provider } from 'react-redux'
+import Store from './Store/configureStore'
 
 export default class App extends React.Component {
   render() {
     return (
-      <SearchStackNavigator/>
+      <Provider store={Store}>
+        <SearchStackNavigator/>
+      </Provider>
     );
   }
 }
