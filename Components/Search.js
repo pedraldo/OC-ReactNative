@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import FilmItem from './FilmItem'
 import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi'
 import FilmDetail from './FilmDetail'
+import FilmList from './FilmList'
 
 class Search extends React.Component {
     constructor(props) {
@@ -73,7 +74,7 @@ class Search extends React.Component {
                     onSubmitEditing={() => this._searchFilms()}
                 />
                 <Button style={{ height: 50 }} title="Rechercher" onPress={() => this._searchFilms()}></Button>
-                <FlatList
+                {/* <FlatList
                     data={this.state.films}
                     keyExtractor={(item) => item.id}
                     renderItem={({item}) => <FilmItem film={item} isFavoriteFilm={this._isFavoriteFilm(item.id)} displayDetailForFilm={this._displayDetailForFilm}/>}
@@ -83,7 +84,18 @@ class Search extends React.Component {
                             this._loadFilms()
                         }
                     }}
+                /> */}
+                <FilmList
+                    films={this.state.films}
+                    displayDetailForFilm={this._displayDetailForFilm}
+                    onEndReachedThreshold={0.5}
+                    onEndReached={() => {
+                        if (this.state.films.length > 0) {
+                            this._loadFilms()
+                        }
+                    }}
                 />
+
                 {this._displayLoading()}
             </View>
         )
@@ -110,7 +122,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         alignItems: 'center',
         justifyContent: 'center'
-      }
+    }
 })
 
 const mapStateToProps = (state) => {
