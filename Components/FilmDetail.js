@@ -1,8 +1,9 @@
 import React from 'react'
 import numeral from 'numeral'
 import moment from 'moment'
-import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, Dimensions } from 'react-native'
 import { connect } from 'react-redux'
+import Lightbox from 'react-native-lightbox'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -12,6 +13,7 @@ class FilmDetail extends React.Component {
             film: undefined,
             isLoading: true,
         }
+        console.log(this.props)
     }
 
     _displayLoading() {
@@ -29,10 +31,22 @@ class FilmDetail extends React.Component {
         if (film !== undefined) {
             return (
                 <ScrollView style={styles.scrollView_container}>
-                    <Image
-                        style={styles.image}
-                        source={{ uri: getImageFromApi(film.poster_path) }}
-                    />
+                    <Lightbox
+                    activeProps={
+                        {
+                            style: {
+                                width: Dimensions.get('window').width,
+                                height: Dimensions.get('window').height
+                            },
+                            resizeMode: 'contain'
+                        }
+                    }>
+                        <Image
+                            style={styles.image}
+                            resizeMode="cover"
+                            source={{ uri: getImageFromApi(film.poster_path) }}
+                        />
+                    </Lightbox>
                     <Text style={styles.title_text}>{film.title}</Text>
                     <TouchableOpacity
                         style={styles.favorite_container}
@@ -109,7 +123,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     image: {
-        height: 169,
+        height: 200,
         margin: 5
     },
     title_text: {
