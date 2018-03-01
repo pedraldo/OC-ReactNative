@@ -1,7 +1,9 @@
 import React from 'react'
 import numeral from 'numeral'
 import moment from 'moment'
-import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native'
+import Swiper from 'react-native-swiper'
+import Icon from 'react-native-vector-icons/Ionicons'
+import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, Modal, Button, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
@@ -11,6 +13,8 @@ class FilmDetail extends React.Component {
         this.state = {
             film: undefined,
             isLoading: true,
+            filmPosterUri: '',
+            showImageModal: false
         }
     }
 
@@ -29,10 +33,15 @@ class FilmDetail extends React.Component {
         if (film !== undefined) {
             return (
                 <ScrollView style={styles.scrollView_container}>
-                    <Image
-                        style={styles.image}
-                        source={{ uri: getImageFromApi(film.poster_path) }}
-                    />
+                    {/* WARNING : StatusBar doesn't seem to dissmiss when modal is opened ONLY ON ANDROID DEVICES */}
+                    <StatusBar hidden={this.state.showImageModal}/>
+                    <TouchableOpacity
+                        onPress={() => this.setState({showImageModal: true})}>
+                        <Image
+                            style={styles.image}
+                            source={{ uri: this.state.filmPosterUri }}
+                        />
+                    </TouchableOpacity>
                     <Text style={styles.title_text}>{film.title}</Text>
                     <TouchableOpacity
                         style={styles.favorite_container}
@@ -46,6 +55,27 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Budget : {numeral(film.budget).format('0,0[.]00 $')}</Text>
                     <Text style={styles.infos_text}>Genre(s) : {film.genres.map(genre => genre.name).join('/')}</Text>
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
+                    <Modal visible={this.state.showImageModal} transparent={false} presentationStyle={'overFullScreen'}>
+                        {/* <View style={[styles.modal_header_footer_swipe, styles.modal_header_swipe]}> */}
+                            <View style={styles.modal_close_btn_container}>
+                                <TouchableOpacity
+                                    onPress={() => this.setState({showImageModal: false})}>
+                                    <Icon name={'ios-close'} size={40} color={'white'}/>
+                                </TouchableOpacity>
+                            </View>
+                        {/* </View> */}
+                        <Swiper style={styles.modal_swipe}>
+                            <View style={styles.modal_swipe_view}>
+                                <Image
+                                    style={styles.modal_swipe_view_image}
+                                    source={{ uri: this.state.filmPosterUri }}
+                                />
+                            </View>
+                        </Swiper>
+                        {/* <View style={styles.modal_header_footer_swipe}>
+
+                        </View> */}
+                    </Modal>
                 </ScrollView>
             )
         }
@@ -85,7 +115,8 @@ class FilmDetail extends React.Component {
         getFilmDetailFromApi(this.props.navigation.state.params.idFilm).then(data => {
             this.setState({
                 film: data,
-                isLoading: false
+                isLoading: false,
+                filmPosterUri: getImageFromApi(data.poster_path)
             })
         })
     }
@@ -141,6 +172,41 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
         marginTop: 5,
+    },
+    modal_header_swipe: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+    },
+    modal_close_btn_container: {
+        position: 'absolute',
+        left: 15,
+        top: 10,
+        zIndex: 1,
+    },
+    modal_close_btn_text: {
+        backgroundColor: 'white',
+        color: 'black',
+        width: 200,
+        height: 40
+    },
+    modal_header_footer_swipe: {
+        flex: 1,
+        backgroundColor: 'black'
+    },
+    modal_swipe: {
+        flex: 10
+    },
+    modal_swipe_view: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+    },
+    modal_swipe_view_image: {
+        flex: 1,
+        width: '100%',
+        height: 'auto'
     }
 })
 
