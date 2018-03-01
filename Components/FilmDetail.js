@@ -1,8 +1,9 @@
 import React from 'react'
 import numeral from 'numeral'
 import moment from 'moment'
-import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, Image, ActivityIndicator, ScrollView, View, TouchableOpacity, Modal } from 'react-native'
 import { connect } from 'react-redux'
+import ImageViewer from 'react-native-image-zoom-viewer';
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -11,6 +12,8 @@ class FilmDetail extends React.Component {
         this.state = {
             film: undefined,
             isLoading: true,
+            imageUri: '',
+            showImageViewer: false
         }
     }
 
@@ -29,10 +32,13 @@ class FilmDetail extends React.Component {
         if (film !== undefined) {
             return (
                 <ScrollView style={styles.scrollView_container}>
-                    <Image
-                        style={styles.image}
-                        source={{ uri: getImageFromApi(film.poster_path) }}
-                    />
+                    <TouchableOpacity
+                        onPress={() => this.setState({ showImageViewer: true })}>
+                        <Image
+                            style={styles.image}
+                            source={{ uri: this.state.imageUri }}
+                        />
+                    </TouchableOpacity>
                     <Text style={styles.title_text}>{film.title}</Text>
                     <TouchableOpacity
                         style={styles.favorite_container}
@@ -46,6 +52,9 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Budget : {numeral(film.budget).format('0,0[.]00 $')}</Text>
                     <Text style={styles.infos_text}>Genre(s) : {film.genres.map(genre => genre.name).join('/')}</Text>
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
+                    <Modal visible={this.state.showImageViewer} transparent={false}>
+                        <ImageViewer imageUrls={[{url: this.state.imageUri}]} />
+                    </Modal>
                 </ScrollView>
             )
         }
@@ -54,12 +63,12 @@ class FilmDetail extends React.Component {
     _displayFavoriteImage() {
         let sourceImage
 
-        sourceImage = !!this.props.favoriteFilms.find(film => film.id === this.state.film.id) 
+        sourceImage = !!this.props.favoriteFilms.find(film => film.id === this.state.film.id)
             ? require('../Images/ic_favorite.png')
             : require('../Images/ic_favorite_border.png')
 
         return (
-            <Image 
+            <Image
                 style={styles.favorite_image}
                 source={sourceImage}
             />
@@ -72,6 +81,7 @@ class FilmDetail extends React.Component {
     }
 
     render() {
+        console.log(this.state)
         return (
             <View style={styles.main_container}>
                 {this._displayLoading()}
@@ -85,6 +95,7 @@ class FilmDetail extends React.Component {
         getFilmDetailFromApi(this.props.navigation.state.params.idFilm).then(data => {
             this.setState({
                 film: data,
+                imageUri: getImageFromApi(data.poster_path),
                 isLoading: false
             })
         })
@@ -137,7 +148,7 @@ const styles = StyleSheet.create({
         margin: 5,
         marginBottom: 15
     },
-    infos_text: {
+    infos_text: {
         marginLeft: 5,
         marginRight: 5,
         marginTop: 5,
