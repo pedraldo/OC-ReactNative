@@ -3,7 +3,7 @@ import numeral from 'numeral'
 import moment from 'moment'
 import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, StatusBar, Modal } from 'react-native'
 import { connect } from 'react-redux'
-import Gallery from 'react-native-image-gallery'
+import { ImageGallery } from '@nlabs/react-native-image-gallery'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -30,6 +30,20 @@ class FilmDetail extends React.Component {
     _displayFilm() {
         const { film } = this.state
         if (film !== undefined) {
+            const images = [
+                {
+                    url: this.state.imagePosterPath,
+                    id: '1',
+                    title: 'Poster 1',
+                    description: 'Description du poster 1 du film'
+                },
+                {
+                    url: this.state.imagePosterPath,
+                    id: '2',
+                    title: 'Poster 2',
+                    description: 'Description du poster 2 du film'
+                }
+            ]
             return (
                 <ScrollView style={styles.scrollView_container}>
                     <StatusBar hidden={this.state.showImageGallery}/>
@@ -58,14 +72,7 @@ class FilmDetail extends React.Component {
                         visible={this.state.showImageGallery}
                         transparent={false}
                     >
-                        <Gallery 
-                            style={{ flex: 1, backgroundColor: 'black' }}
-                            images={[
-                                { source: { uri: this.state.imagePosterPath } },
-                                { source: { uri: this.state.imagePosterPath } },
-                                { source: { uri: this.state.imagePosterPath } }
-                            ]}
-                        />
+                        <ImageGallery images={images} />
                     </Modal>
                 </ScrollView>
             )
