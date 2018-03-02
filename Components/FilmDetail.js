@@ -1,8 +1,9 @@
 import React from 'react'
 import numeral from 'numeral'
 import moment from 'moment'
-import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, StatusBar, Modal } from 'react-native'
 import { connect } from 'react-redux'
+import Gallery from 'react-native-image-gallery'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -11,6 +12,8 @@ class FilmDetail extends React.Component {
         this.state = {
             film: undefined,
             isLoading: true,
+            imagePosterPath: '',
+            showImageGallery: false
         }
     }
 
@@ -29,10 +32,15 @@ class FilmDetail extends React.Component {
         if (film !== undefined) {
             return (
                 <ScrollView style={styles.scrollView_container}>
-                    <Image
-                        style={styles.image}
-                        source={{ uri: getImageFromApi(film.poster_path) }}
-                    />
+                    <StatusBar hidden={this.state.showImageGallery}/>
+                    <TouchableOpacity
+                        onPress={() => this.setState({showImageGallery: true})}
+                        style={{ flex: 1 }}>
+                        <Image
+                            style={styles.image}
+                            source={{ uri: getImageFromApi(film.poster_path) }}
+                        />
+                    </TouchableOpacity>
                     <Text style={styles.title_text}>{film.title}</Text>
                     <TouchableOpacity
                         style={styles.favorite_container}
@@ -46,6 +54,19 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Budget : {numeral(film.budget).format('0,0[.]00 $')}</Text>
                     <Text style={styles.infos_text}>Genre(s) : {film.genres.map(genre => genre.name).join('/')}</Text>
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
+                    <Modal
+                        visible={this.state.showImageGallery}
+                        transparent={false}
+                    >
+                        <Gallery 
+                            style={{ flex: 1, backgroundColor: 'black' }}
+                            images={[
+                                { source: { uri: this.state.imagePosterPath } },
+                                { source: { uri: this.state.imagePosterPath } },
+                                { source: { uri: this.state.imagePosterPath } }
+                            ]}
+                        />
+                    </Modal>
                 </ScrollView>
             )
         }
@@ -85,7 +106,8 @@ class FilmDetail extends React.Component {
         getFilmDetailFromApi(this.props.navigation.state.params.idFilm).then(data => {
             this.setState({
                 film: data,
-                isLoading: false
+                isLoading: false,
+                imagePosterPath: getImageFromApi(data.poster_path)
             })
         })
     }
