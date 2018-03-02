@@ -1,9 +1,10 @@
 import React from 'react'
 import numeral from 'numeral'
 import moment from 'moment'
-import { StyleSheet, Text, Image, ActivityIndicator, ScrollView, View, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, Text, Image, ActivityIndicator, ScrollView, View, TouchableOpacity, Modal, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import ImageViewer from 'react-native-image-zoom-viewer';
+import Icon from 'react-native-vector-icons/Ionicons'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -32,6 +33,7 @@ class FilmDetail extends React.Component {
         if (film !== undefined) {
             return (
                 <ScrollView style={styles.scrollView_container}>
+                    <StatusBar hidden={this.state.showImageViewer}/>
                     <TouchableOpacity
                         onPress={() => this.setState({ showImageViewer: true })}>
                         <Image
@@ -53,7 +55,19 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Genre(s) : {film.genres.map(genre => genre.name).join('/')}</Text>
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
                     <Modal visible={this.state.showImageViewer} transparent={false}>
-                        <ImageViewer imageUrls={[{url: this.state.imageUri}]} />
+                        <View style={[styles.modal_header_footer, styles.modal_header]}>
+                            <TouchableOpacity
+                                onPress={() => this.setState({showImageViewer: false})}
+                                style={{ paddingRight: 20 }}>
+                                <Icon name={'ios-close'} size={40} color={'white'}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ flex: 8 }}>
+                            <ImageViewer imageUrls={[{url: this.state.imageUri}, {url: this.state.imageUri}]} />
+                        </View>
+                        <View style={styles.modal_header_footer}>
+
+                        </View>
                     </Modal>
                 </ScrollView>
             )
@@ -81,7 +95,6 @@ class FilmDetail extends React.Component {
     }
 
     render() {
-        console.log(this.state)
         return (
             <View style={styles.main_container}>
                 {this._displayLoading()}
@@ -152,6 +165,16 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
         marginTop: 5,
+    },
+    modal_header_footer: {
+        flex: 1,
+        backgroundColor: 'black'
+    },
+    modal_header: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingLeft: 10
     }
 })
 
