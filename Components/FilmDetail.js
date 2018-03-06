@@ -1,7 +1,7 @@
 import React from 'react'
 import numeral from 'numeral'
 import moment from 'moment'
-import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, Modal } from 'react-native'
 import { connect } from 'react-redux'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
@@ -11,6 +11,8 @@ class FilmDetail extends React.Component {
         this.state = {
             film: undefined,
             isLoading: true,
+            showImageView: false,
+            imagePosterUrl: ''
         }
     }
 
@@ -29,10 +31,13 @@ class FilmDetail extends React.Component {
         if (film !== undefined) {
             return (
                 <ScrollView style={styles.scrollView_container}>
-                    <Image
-                        style={styles.image}
-                        source={{ uri: getImageFromApi(film.poster_path) }}
-                    />
+                    <TouchableOpacity
+                        onPress={() => this.setState({showImageView: true})}>
+                        <Image
+                            style={styles.image}
+                            source={{ uri: this.state.imagePosterUrl }}
+                        />
+                    </TouchableOpacity>
                     <Text style={styles.title_text}>{film.title}</Text>
                     <TouchableOpacity
                         style={styles.favorite_container}
@@ -46,6 +51,12 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Budget : {numeral(film.budget).format('0,0[.]00 $')}</Text>
                     <Text style={styles.infos_text}>Genre(s) : {film.genres.map(genre => genre.name).join('/')}</Text>
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
+                    <Modal visible={this.state.showImageView} transparent={false}>
+                        <Image
+                            style={styles.image}
+                            source={{ uri: this.state.imagePosterUrl }}
+                        />
+                    </Modal>
                 </ScrollView>
             )
         }
@@ -85,7 +96,8 @@ class FilmDetail extends React.Component {
         getFilmDetailFromApi(this.props.navigation.state.params.idFilm).then(data => {
             this.setState({
                 film: data,
-                isLoading: false
+                isLoading: false,
+                imagePosterUrl: getImageFromApi(data.poster_path)
             })
         })
     }
