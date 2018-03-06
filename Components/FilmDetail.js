@@ -4,6 +4,7 @@ import moment from 'moment'
 import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, StatusBar, Modal } from 'react-native'
 import { connect } from 'react-redux'
 import Gallery from 'react-native-image-gallery'
+import Icon from 'react-native-vector-icons/Ionicons'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -58,14 +59,21 @@ class FilmDetail extends React.Component {
                         visible={this.state.showImageGallery}
                         transparent={false}
                     >
-                        <Gallery 
-                            style={{ flex: 1, backgroundColor: 'black' }}
-                            images={[
-                                { source: { uri: this.state.imagePosterPath } },
-                                { source: { uri: this.state.imagePosterPath } },
-                                { source: { uri: this.state.imagePosterPath } }
-                            ]}
-                        />
+                        <TouchableOpacity
+                            onPress={() => this.setState({ showImageGallery: false })}
+                            style={{ position: 'absolute', top: 0, left: 15, paddingRight: 20, width: 50, height: 50, zIndex: 1 }}>
+                            <Icon name={'ios-close'} size={50} color={'white'}/>
+                        </TouchableOpacity>
+                        <View style={{ flex: 1 }}>
+                            <Gallery 
+                                style={{ flex: 1, backgroundColor: 'black' }}
+                                images={[
+                                    { source: { uri: this.state.imagePosterPath } },
+                                    { source: { uri: this.state.imagePosterPath } },
+                                    { source: { uri: this.state.imagePosterPath } }
+                                ]}
+                            />
+                        </View>
                     </Modal>
                 </ScrollView>
             )
