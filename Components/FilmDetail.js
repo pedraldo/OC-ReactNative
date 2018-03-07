@@ -3,6 +3,7 @@ import numeral from 'numeral'
 import moment from 'moment'
 import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, Modal } from 'react-native'
 import { connect } from 'react-redux'
+import PhotoView from 'react-native-photo-view'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -52,9 +53,14 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Genre(s) : {film.genres.map(genre => genre.name).join('/')}</Text>
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
                     <Modal visible={this.state.showImageView} transparent={false}>
-                        <Image
+                        {/* <Image
                             style={styles.image}
                             source={{ uri: this.state.imagePosterUrl }}
+                        /> */}
+                        <PhotoView
+                            source={{ uri: this.state.imagePosterUrl }}
+                            minimumZoomScale={0.5}
+                            maximumZoomScale={3}
                         />
                     </Modal>
                 </ScrollView>
