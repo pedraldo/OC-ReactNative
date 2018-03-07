@@ -1,8 +1,9 @@
 import React from 'react'
 import numeral from 'numeral'
 import moment from 'moment'
-import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, View, Text, ActivityIndicator, ScrollView, TouchableOpacity, Modal, Dimensions, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
+import Image from 'react-native-transformable-image'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -31,6 +32,7 @@ class FilmDetail extends React.Component {
         if (film !== undefined) {
             return (
                 <ScrollView style={styles.scrollView_container}>
+                    <StatusBar hidden={this.state.showImageView}/>
                     <TouchableOpacity
                         onPress={() => this.setState({showImageView: true})}>
                         <Image
@@ -53,7 +55,7 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
                     <Modal visible={this.state.showImageView} transparent={false}>
                         <Image
-                            style={styles.image}
+                            style={{ width: Dimensions.get('screen').width }}
                             source={{ uri: this.state.imagePosterUrl }}
                         />
                     </Modal>
