@@ -54,7 +54,7 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
                     <Modal visible={this.state.showImageView} transparent={false}>
                         <Image
-                            style={{ width: Dimensions.get('screen').width }}
+                            style={{ width: Dimensions.get('screen').width, height: 500 }}
                             source={{ uri: this.state.imagePosterUrl }}
                         />
                     </Modal>
