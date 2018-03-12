@@ -1,8 +1,9 @@
 import React from 'react'
 import numeral from 'numeral'
 import moment from 'moment'
-import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, Modal, StatusBar, Dimensions } from 'react-native'
+import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, Modal, StatusBar, Dimensions, Easing } from 'react-native'
 import { connect } from 'react-redux'
+import ZoomImage from 'react-native-zoom-image'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -53,9 +54,11 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Genre(s) : {film.genres.map(genre => genre.name).join('/')}</Text>
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
                     <Modal visible={this.state.showImageView} transparent={false}>
-                        <Image
-                            style={{ width: Dimensions.get('screen').width, height: 500 }}
+                        <ZoomImage
                             source={{ uri: this.state.imagePosterUrl }}
+                            easingFunc={Easing.ease}
+                            imgStyle={{width: 250, height: 230}}
+                            // style={{ width: Dimensions.get('screen').width, height: 500 }}
                         />
                     </Modal>
                 </ScrollView>
