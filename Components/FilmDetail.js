@@ -4,6 +4,7 @@ import moment from 'moment'
 import { StyleSheet, View, Text, Image, ActivityIndicator, ScrollView, TouchableOpacity, Modal, Dimensions, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
 import ImageZoom from 'react-native-image-pan-zoom'
+import Swiper from 'react-native-swiper'
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
 
 class FilmDetail extends React.Component {
@@ -58,14 +59,38 @@ class FilmDetail extends React.Component {
                     <Text style={styles.infos_text}>Genre(s) : {film.genres.map(genre => genre.name).join('/')}</Text>
                     <Text style={styles.infos_text}>Companie(s) : {film.production_companies.map(company => company.name).join('/')}</Text>
                     <Modal visible={this.state.showImageView} transparent={false}>
-                        <ImageZoom cropWidth={Dimensions.get('window').width}
-                            cropHeight={Dimensions.get('window').height}
-                            imageWidth={Dimensions.get('screen').width}
-                            imageHeight={this.state.imagePosterSize.height}
-                            >
-                            <Image style={{width: Dimensions.get('screen').width, height: this.state.imagePosterSize.height}}
-                                source={{uri:this.state.imagePosterUrl}}/>
-                        </ImageZoom>
+                        <Swiper loop={false} showsPagination={false}>
+                            <View>
+                                <ImageZoom cropWidth={Dimensions.get('window').width}
+                                    cropHeight={Dimensions.get('window').height}
+                                    imageWidth={Dimensions.get('screen').width}
+                                    imageHeight={this.state.imagePosterSize.height}
+                                    >
+                                    <Image style={{width: Dimensions.get('screen').width, height: this.state.imagePosterSize.height}}
+                                        source={{uri:this.state.imagePosterUrl}}/>
+                                </ImageZoom>
+                            </View>
+                            <View>
+                                <ImageZoom cropWidth={Dimensions.get('window').width}
+                                    cropHeight={Dimensions.get('window').height}
+                                    imageWidth={Dimensions.get('screen').width}
+                                    imageHeight={this.state.imagePosterSize.height}
+                                    >
+                                    <Image style={{width: Dimensions.get('screen').width, height: this.state.imagePosterSize.height}}
+                                        source={{uri:this.state.imagePosterUrl}}/>
+                                </ImageZoom>
+                            </View>
+                            <View>
+                                <ImageZoom cropWidth={Dimensions.get('window').width}
+                                    cropHeight={Dimensions.get('window').height}
+                                    imageWidth={Dimensions.get('screen').width}
+                                    imageHeight={this.state.imagePosterSize.height}
+                                    >
+                                    <Image style={{width: Dimensions.get('screen').width, height: this.state.imagePosterSize.height}}
+                                        source={{uri:this.state.imagePosterUrl}}/>
+                                </ImageZoom>
+                            </View>
+                        </Swiper>
                     </Modal>
                 </ScrollView>
             )
