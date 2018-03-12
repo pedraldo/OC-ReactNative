@@ -13,7 +13,11 @@ class FilmDetail extends React.Component {
             film: undefined,
             isLoading: true,
             showImageView: false,
-            imagePosterUrl: ''
+            imagePosterUrl: '',
+            imagePosterSize: {
+                width: 0,
+                height: 0
+            }
         }
     }
 
@@ -56,9 +60,10 @@ class FilmDetail extends React.Component {
                     <Modal visible={this.state.showImageView} transparent={false}>
                         <ImageZoom cropWidth={Dimensions.get('window').width}
                             cropHeight={Dimensions.get('window').height}
-                            imageWidth={Dimensions.get('window').width}
+                            imageWidth={Dimensions.get('screen').width}
+                            imageHeight={this.state.imagePosterSize.height}
                             >
-                            <Image style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height}}
+                            <Image style={{width: Dimensions.get('screen').width, height: this.state.imagePosterSize.height}}
                                 source={{uri:this.state.imagePosterUrl}}/>
                         </ImageZoom>
                     </Modal>
@@ -99,10 +104,17 @@ class FilmDetail extends React.Component {
 
     componentDidMount() {
         getFilmDetailFromApi(this.props.navigation.state.params.idFilm).then(data => {
-            this.setState({
-                film: data,
-                isLoading: false,
-                imagePosterUrl: getImageFromApi(data.poster_path)
+            const imagePosterUrl = getImageFromApi(data.poster_path)
+            Image.getSize(imagePosterUrl, (width, height) => {
+                this.setState({
+                    film: data,
+                    isLoading: false,
+                    imagePosterUrl,
+                    imagePosterSize: {
+                        width,
+                        height
+                    }
+                })
             })
         })
     }
